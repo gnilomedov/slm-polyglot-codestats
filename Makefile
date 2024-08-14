@@ -1,5 +1,5 @@
 KOTLIN = kotlinc
-KOTLIN_FLAGS = -include-runtime
+KOTLIN_FLAGS =
 
 CXX = g++
 CXXFLAGS = -std=c++17 -O2 -Wall -fPIC
@@ -40,3 +40,4 @@ $(OUT_DIR)/polyglot_pyc: src-py
 
 clean:
 	rm -rf $(OUT_DIR)
+	rm -rf .gradle

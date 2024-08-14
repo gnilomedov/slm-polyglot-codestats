@@ -1,5 +1,7 @@
 package demo.polyglot
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.IOException
 
@@ -21,18 +23,19 @@ data class FileContent(val path: String, val content: String)
  */
 @Throws(IOException::class)
 fun scanFolders(folders: List<String>, extensions: List<String>): List<FileContent> {
+    val logger: Logger = LoggerFactory.getLogger("FileScanner")
     val normalizedExtensions = extensions.map { it.removePrefix(".") }
     var totalSize = 0L
     var totalCount = 0
 
     val fileContents = folders.flatMap { folder ->
         File(folder).walk()
-            .filter { file -> 
+            .filter { file ->
                 file.isFile && normalizedExtensions.contains(file.extension)
             }
             .map { file ->
                 val formattedSize = String.format("%.1fKb", file.length() / 1024.0)
-                println("[ INFO ] ${file.name} : ${formattedSize}")
+                logger.info("${file.name} : ${formattedSize}")
 
                 totalSize += file.length()
                 totalCount++
@@ -43,7 +46,7 @@ fun scanFolders(folders: List<String>, extensions: List<String>): List<FileConte
     }
 
     val formattedTotalSize = String.format("%.1fKb", totalSize / 1024.0)
-    println("[ INFO ] TOTAL files: $totalCount size: ${formattedTotalSize}")
+    logger.info("TOTAL files: $totalCount size: ${formattedTotalSize}")
 
     return fileContents
 }

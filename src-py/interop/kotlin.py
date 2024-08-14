@@ -10,10 +10,15 @@ def scan_folders(folders: list[str]) -> list[tuple[str, str]]:
     :return: List of tuples containing file paths and their contents.
     '''
     if not jpype.isJVMStarted():
-        jpype.startJVM(classpath=['build-out/polyglot.jar'])
+        jpype.startJVM(classpath=[
+            '/usr/share/java/kotlin-stdlib.jar',
+            '/usr/share/java/slf4j-api.jar',
+            '/usr/share/java/slf4j-simple.jar',
+            'build-out/polyglot.jar',
+        ])
     from demo.polyglot import FolderScannerKt
 
-    extensions = ['.cpp', '.h', '.kt', '.py', '.sh']
+    extensions = ['.cpp', '.h', '.kt', '.kts', '.py', '.sh']
     file_contents_java = FolderScannerKt.scanFolders(_list_py2java(folders),
                                                      _list_py2java(extensions))
 
