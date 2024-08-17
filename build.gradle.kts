@@ -1,5 +1,8 @@
+import java.nio.file.Files
+
 plugins {
     kotlin("jvm") version "1.9.20"
+    kotlin("plugin.serialization") version "1.9.20"
     `java-library`
     // Using the cpp-library plugin alongside the java-library plugin is not feasible without
     // significant custom configuration, which might introduce more complexity than it solves.
@@ -14,6 +17,10 @@ val mockKVersion by extra("1.13.7")
 dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("org.slf4j:slf4j-api:2.0.0")
+    implementation("org.slf4j:slf4j-simple:2.0.0")
+
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("org.json:json:20230227")
 
     testImplementation(kotlin("test"))
     testImplementation("io.mockk:mockk:$mockKVersion")
@@ -100,8 +107,41 @@ tasks {
         errorOutput = System.err
     }
 
+    /**
+     * Task to copy dependency libraries and create symbolic links without version numbers.
+     *
+     * This task performs the following operations:
+     * 1. Copies all runtime classpath dependencies to the build/libs directory.
+     * 2. Creates symbolic links for each JAR file, removing version numbers from the filenames.
+     */
+    val copyDependencies by registering(Copy::class) {
+        description = "Copies dependencies and creates symlinks without version numbers"
+        group = "build"
+
+        val prefixes = listOf(
+            "kotlin-stdlib",
+            "slf4j-api",
+            "slf4j-simple",
+            "okhttp",
+            "okio-jvm",
+            "json"
+        )
+        from(configurations.runtimeClasspath) {
+            include { fileTreeElement ->
+                prefixes.any { prefix ->
+                    fileTreeElement.file.name.startsWith(prefix)
+                }
+            }
+        }
+        into(layout.buildDirectory.dir("libs"))
+
+        doLast {
+            createSymlinksWithoutVersions()
+        }
+    }
+
     build {
-        dependsOn(compileCpp, compilePython)
+        dependsOn(compileCpp, compilePython, copyDependencies)
     }
 }
 
@@ -111,12 +151,18 @@ kotlin {
 
 layout.buildDirectory.set(file("build-out"))
 
+/** Retrieves Python configuration arguments for the given configuration flag. */
 fun getPythonConfigArgs(config: String): List<String> =
     "python3-config $config".runCommand()
         .trim()
         .split(" ")
         .filter(String::isNotEmpty)
 
+/**
+ * Executes the string as a shell command and returns the output.
+ *
+ * @return The output of the command as a [String].
+ */
 fun String.runCommand(): String =
     ProcessBuilder(this.split(" "))
         .redirectErrorStream(true)
@@ -124,3 +170,18 @@ fun String.runCommand(): String =
         .inputStream
         .bufferedReader()
         .readText()
+
+/** Creates symbolic links for JAR files without version numbers in their names. */
+fun createSymlinksWithoutVersions() {
+    val libsDir = layout.buildDirectory.dir("libs").get().asFile
+    val versionPattern = Regex("-\\d+(\\.\\d+)*(-\\w+)?\\.jar$")
+
+    libsDir.listFiles()?.filter { it.isFile && it.name.endsWith(".jar") }?.forEach { file ->
+        val baseName = file.name.replace(versionPattern, ".jar")
+        if (baseName != file.name) {
+            val symlink = File(libsDir, baseName)
+            symlink.delete() // Remove existing symlink if any
+            Files.createSymbolicLink(symlink.toPath(), file.toPath())
+        }
+    }
+}

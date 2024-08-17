@@ -69,7 +69,7 @@ public:
  * @param contents An array of file contents corresponding to the paths.
  * @param count The number of files to analyze.
  * @return A pointer to an array of FileStats structures, or nullptr on error.
- *         The caller is responsible for freeing this memory using delete[].
+ *         The caller is responsible for freeing this memory using freeFileStats().
  * @throws std::invalid_argument if any path or content pointer is null.
  */
 FileStats* analyzeFiles(const char** paths, const char** contents, int count);

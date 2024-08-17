@@ -4,8 +4,8 @@ import pandas as pd
 import sys
 from tabulate import tabulate
 
-from interop.cpp import analyze_files
-from interop.kotlin import scan_folders
+from interop.cpp import analyze_files, compose_code_improve_prompt
+from interop.kotlin import execute_llm_query, scan_folders
 
 
 def parse_folder_masks(masks):
@@ -63,6 +63,10 @@ def main():
     logger.info(
         '\nDetailed Stats:\n' +
         tabulate(table, headers='keys', tablefmt='presto'))
+
+    llm_response = execute_llm_query('http://local+interactive', 'API_KEY',
+                                     compose_code_improve_prompt(file_contents))
+    logger.info(f'LLM Response:\n\n=== === ===\n{llm_response}\n=== === ===\n\n')
 
 
 if __name__ == '__main__':
