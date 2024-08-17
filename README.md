@@ -1,6 +1,6 @@
-# Polyglot CodeStats
+# LLM Polyglot CodeStats
 
-Polyglot CodeStats is a cross-language project that demonstrates interaction between
+LLM Polyglot CodeStats is a cross-language project that demonstrates interaction between
 Python, C++, and Kotlin to analyze code statistics across multiple source directories.
 Here, "Polyglot" highlights both the support for various programming languages and the integration
 with multiple Language Model APIs (LLMs).
@@ -9,8 +9,8 @@ with multiple Language Model APIs (LLMs).
 
 0. Clone the repository:
 ```bash
-git clone https://github.com/gnilomedov/polyglot-codestats.git
-cd polyglot-codestats
+git clone https://github.com/gnilomedov/llm-polyglot-codestats.git
+cd llm-polyglot-codestats
 ```
 
 ## Building and Running
