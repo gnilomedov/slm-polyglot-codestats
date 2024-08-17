@@ -13,6 +13,8 @@ import java.io.IOException
  */
 data class FileContent(val path: String, val content: String)
 
+private val logger: Logger = LoggerFactory.getLogger("FileScanner")
+
 /**
  * Scans the specified folders for files with given extensions and returns their contents.
  *
@@ -23,7 +25,6 @@ data class FileContent(val path: String, val content: String)
  */
 @Throws(IOException::class)
 fun scanFolders(folders: List<String>, extensions: List<String>): List<FileContent> {
-    val logger: Logger = LoggerFactory.getLogger("FileScanner")
     val normalizedExtensions = extensions.map { it.removePrefix(".") }
     var totalSize = 0L
     var totalCount = 0
@@ -35,7 +36,7 @@ fun scanFolders(folders: List<String>, extensions: List<String>): List<FileConte
             }
             .map { file ->
                 val formattedSize = String.format("%.1fKb", file.length() / 1024.0)
-                logger.info("${file.name} : ${formattedSize}")
+                logger.info("${file.name} : $formattedSize")
 
                 totalSize += file.length()
                 totalCount++
@@ -46,7 +47,7 @@ fun scanFolders(folders: List<String>, extensions: List<String>): List<FileConte
     }
 
     val formattedTotalSize = String.format("%.1fKb", totalSize / 1024.0)
-    logger.info("TOTAL files: $totalCount size: ${formattedTotalSize}")
+    logger.info("TOTAL files: $totalCount size: $formattedTotalSize")
 
     return fileContents
 }
