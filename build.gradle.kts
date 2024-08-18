@@ -50,6 +50,83 @@ tasks {
         destinationDirectory.set(layout.buildDirectory)
     }
 
+    /**
+     * Task to copy dependency libraries and create symbolic links without version numbers.
+     *
+     * This task performs the following operations:
+     * 1. Copies all runtime classpath dependencies to the build/libs directory.
+     * 2. Creates symbolic links for each JAR file, removing version numbers from the filenames.
+     */
+    val copyDependencies by registering(Copy::class) {
+        description = "Copies dependencies and creates symlinks without version numbers"
+        group = "build"
+
+        val prefixes = listOf(
+            "kotlin-stdlib",
+            "slf4j-api",
+            "slf4j-simple",
+            "okhttp",
+            "okio-jvm",
+            "json"
+        )
+        from(configurations.runtimeClasspath) {
+            include { fileTreeElement ->
+                prefixes.any { prefix ->
+                    fileTreeElement.file.name.startsWith(prefix)
+                }
+            }
+        }
+        into(layout.buildDirectory.dir("libs"))
+
+        doLast {
+            createSymlinksWithoutVersions()
+        }
+    }
+
+
+    val compileAndRunCppTests by registering {
+        group = "build"
+        description = "Compile and run all C++ tests"
+
+        doLast {
+            val testDir = file("src-cpp-test")
+            val testFiles = testDir.walk().filter { it.name.endsWith("_test.cpp") }.toList()
+            val buildDir = layout.buildDirectory.dir("bin-cpp-test").get().asFile
+            buildDir.mkdirs()
+            val mainSources = fileTree("src-cpp") { include("**/*.cpp") }.files.map {
+                it.absolutePath }
+
+            testFiles.forEach { testFile ->
+                val testName = testFile.nameWithoutExtension
+                val outputFile = buildDir.resolve(testName)
+                val compileCommand = buildList {
+                    add("g++")
+                    addAll(listOf("-std=c++17", "-O2", "-Wall"))
+                    addAll(listOf("-o", outputFile.absolutePath))
+                    addAll(mainSources)
+                    add(testFile.absolutePath)
+                    addAll(listOf("-I", "src-cpp", "-I", "src-cpp-test"))
+                    addAll(listOf("-L/usr/local/lib", "-lglog"))
+                    addAll(listOf("-lgtest", "-lgtest_main", "-pthread"))
+                }
+
+                println("Compiling test: $testName\n${compileCommand.joinToString(" ")}")
+                exec {
+                    commandLine(compileCommand)
+                    standardOutput = System.out
+                    errorOutput = System.err
+                }
+
+                println("Running test: $testName")
+                exec {
+                    commandLine(outputFile.absolutePath)
+                    standardOutput = System.out
+                    errorOutput = System.err
+                }
+            }
+        }
+    }
+
     val compileCpp by registering(Exec::class) {
         group = "build"
         description = "Compile C++ into .so"
@@ -62,9 +139,12 @@ tasks {
             addAll(listOf("-std=c++17", "-O2", "-Wall", "-fPIC", "-shared"))
             addAll(listOf("-o", outputFile.absolutePath))
             addAll(cppFiles.map { it.absolutePath })
+            addAll(listOf("-L/usr/local/lib", "-lglog"))
             addAll(getPythonConfigArgs("--includes"))
             addAll(getPythonConfigArgs("--ldflags"))
         })
+
+        dependsOn(compileAndRunCppTests)
 
         doFirst {
             println("Executing:\n${commandLine.joinToString(" ")}")
@@ -73,6 +153,7 @@ tasks {
         standardOutput = System.out
         errorOutput = System.err
     }
+
 
     val compilePython by registering(Exec::class) {
         group = "build"
@@ -107,38 +188,6 @@ tasks {
         errorOutput = System.err
     }
 
-    /**
-     * Task to copy dependency libraries and create symbolic links without version numbers.
-     *
-     * This task performs the following operations:
-     * 1. Copies all runtime classpath dependencies to the build/libs directory.
-     * 2. Creates symbolic links for each JAR file, removing version numbers from the filenames.
-     */
-    val copyDependencies by registering(Copy::class) {
-        description = "Copies dependencies and creates symlinks without version numbers"
-        group = "build"
-
-        val prefixes = listOf(
-            "kotlin-stdlib",
-            "slf4j-api",
-            "slf4j-simple",
-            "okhttp",
-            "okio-jvm",
-            "json"
-        )
-        from(configurations.runtimeClasspath) {
-            include { fileTreeElement ->
-                prefixes.any { prefix ->
-                    fileTreeElement.file.name.startsWith(prefix)
-                }
-            }
-        }
-        into(layout.buildDirectory.dir("libs"))
-
-        doLast {
-            createSymlinksWithoutVersions()
-        }
-    }
 
     build {
         dependsOn(compileCpp, compilePython, copyDependencies)

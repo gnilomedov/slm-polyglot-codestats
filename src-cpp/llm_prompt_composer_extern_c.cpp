@@ -10,6 +10,7 @@
 
 extern "C" {
 
+
 char* composeCodeImprovePrompt(const char** paths, const char** contents, int count) {
     if (count < 0) {
         throw std::invalid_argument("Invalid input count");
@@ -39,5 +40,6 @@ char* composeCodeImprovePrompt(const char** paths, const char** contents, int co
 void freeComposedPrompt(char* prompt) {
     delete[] prompt;
 }
+
 
 } // extern "C"
