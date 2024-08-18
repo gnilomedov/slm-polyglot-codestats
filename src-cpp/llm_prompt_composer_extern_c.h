@@ -2,9 +2,16 @@
 #define LLM_PROMPT_COMPOSER_EXTERN_C_H
 
 
+/**
+ * @brief External C linkage block
+ *
+ * Prevents C++ name mangling, enabling C and FFI compatibility.
+ * Allows calling from other languages (e.g., Python via ctypes).
+ */
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 /**
  * @brief Composes a prompt for code improvement based on multiple files.
@@ -24,6 +31,7 @@ char* composeCodeImprovePrompt(const char** paths, const char** contents, int co
  * @param prompt Pointer to the C-string returned by composeCodeImprovePrompt.
  */
 void freeComposedPrompt(char* prompt);
+
 
 #ifdef __cplusplus
 } // extern "C"

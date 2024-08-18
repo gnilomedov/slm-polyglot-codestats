@@ -4,14 +4,20 @@
 #include <vector>
 #include <string>
 
+#include <glog/logging.h>
 
 std::vector<std::string> LlmPromptComposer::composePromptLines(
     const std::vector<std::pair<std::string, std::string>>& path_and_contents) const {
     std::vector<std::string> lines;
 
     composePreamble(&lines);
+    LOG(INFO) << "Preamble added. Total lines: " << lines.size();
+
     composeFilesAndContents(path_and_contents, &lines);
+    LOG(INFO) << "Files and contents added. Total lines: " << lines.size();
+
     composeInstructions(&lines);
+    LOG(INFO) << "Instructions added. Total lines: " << lines.size();
 
     return lines;
 }
@@ -19,7 +25,7 @@ std::vector<std::string> LlmPromptComposer::composePromptLines(
 void LlmPromptComposer::composePreamble(std::vector<std::string>* out_lines) const {
     out_lines->insert(out_lines->end(), {
         "Assist me in improving programming code.",
-        "Find below file paths and contents marked with '==='.",
+        "Find below file paths and contents marked with '===.'",
         "Analyze and provide suggestions for improvement.",
         "",
     });

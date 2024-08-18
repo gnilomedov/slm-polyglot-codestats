@@ -4,16 +4,18 @@
 #include <cassert>
 #include <sstream>
 
+#include <glog/logging.h>
+
 
 SrcAnalysisCalculator::SrcAnalysisCalculator(const std::string& path)
     : TRIM_REGEX("^\\s+|\\s+$"),
       TRIVIAL_REGEX("^[}\\])]$"),
-      IMPORT_REGEX("^(import|#include|using)\\s+.*$"),
+      IMPORT_REGEX("^(\\s*(import|#include|using)\\s+.*|from\\s+\\w+\\s+import\\s+.*)$"),
       COMMENT_REGEX("^(//|#).*$"),
       MULTISTRING_REGEX(".*(\"\"\"|\'\'\').*$"),
-      LOGGING_REGEX(
-          R"(.*(\[\s*(debug|info|warn|error)\s*\]|log(ger)?\.(debug|info|warn|error)).*)",
-          std::regex::icase),
+      LOGGING_REGEX(R"(.*(\[\s*(debug|info|warn|error)\s*\]|log(ger)?\.(debug|info|warn|error)|)"
+	                R"(log\s*\(\s*(debug|info|warn|error)\s*\)).*)",
+	                std::regex::icase),
       CLASS_REGEX("(public|protected|private|data\\s+)?(class|interface|enum|struct)\\s+\\w+.*$"),
       FORWARD_DECLARATION_REGEX("class\\s+\\w+\\s*;$"),
       in_multiline_comment(false),
@@ -37,7 +39,7 @@ FileStats SrcAnalysisCalculator::analyze(const std::string& content) {
         ++stats.total_lines;
         classifyLine(line);
     }
-    std::cout << "[ INFO ] " << getFileName(stats.path_cstr) << " : " << stats.total_lines << std::endl;
+    LOG(INFO) << getFileName(stats.path_cstr) << " : " << stats.total_lines;
 
     // FileStats is movable but non-copyable by design.
     // std::move explicitly indicates the transfer of ownership.

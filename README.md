@@ -13,16 +13,37 @@ git clone https://github.com/gnilomedov/llm-polyglot-codestats.git
 cd llm-polyglot-codestats
 ```
 
-## Building and Running
+## Setting Up Dependencies
 
-1. **Setup Gradle** (E.g. for Ubuntu/Debian):
+### 1. **Install C++ Libs**
+(E.g. for Ubuntu/Debian):
+
+#### Install glog, gtest:
+```bash
+sudo apt update
+sudo apt install libgtest-dev
+sudo apt install libgoogle-glog-dev
+```
+
+`gtest` needs to be built manually:
+
+```bash
+sudo apt install cmake
+cd /usr/src/gtest
+sudo cmake CMakeLists.txt
+sudo make
+sudo cp *.a /usr/lib
+```
+
+### 2. **Setup Gradle**
+(E.g. for Ubuntu/Debian):
 ```bash
 sudo apt update
 sudo apt install openjdk-11-jdk
 sudo apt install gradle
 ```
 
-2. **Setup venv and activate**:
+### 3. **Setup venv and activate**:
 ```bash
 [[ ! -d venv ]] && mkdir venv
 cd venv
@@ -31,29 +52,35 @@ virtualenv $venvname
 source $venvname/bin/activate
 ```
 
-3. **Install Env**:
+### 4. **Install Python Dependencies**:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Build**:
+## Building and Running
+
+### 5. **Build**:
+```bash
+gradle build
+```
+or
 ```bash
 make
 ```
 
-5. **Run**:
+### 6. **Run**:
 ```bash
 python build-out/pycache/polyglot_codestats.pyc 'src-*' 'bin'
 ```
 
-Instead of `src-*`, use your preferred source directory.
+Replace `'src-*'` with your preferred source directory.
 
-6. **Cleanup**:
+### 7. **Cleanup**:
 ```bash
 make clean
 ```
 
-Or run the script to execute all end-to-end (except for env setup):
+## Or (instead 5. .. 7.) run the script to execute all end-to-end:
 ```bash
 ./bin/polyglot-codestats-e2e.sh
 ```
