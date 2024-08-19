@@ -1,12 +1,17 @@
 import ctypes
 from ctypes import cast, c_char, c_char_p, c_int, POINTER
 from dataclasses import dataclass
+import os
+import sys
 
 from interop.analysis_extern_c_h import FileStats, PyFileStats
 from interop.cpp_utils import decode_pointer_c_char_str
 
-
 lib = ctypes.CDLL('./build-out/polyglot.so')
+
+lib.initPolyglot.argtypes = [ctypes.c_char_p]
+lib.initPolyglot.restype = None
+lib.initPolyglot(os.path.split(sys.argv[0])[1].encode('utf-8'))
 
 lib.analyzeFiles.argtypes = [POINTER(c_char_p), POINTER(c_char_p), c_int]
 lib.analyzeFiles.restype = POINTER(FileStats)
