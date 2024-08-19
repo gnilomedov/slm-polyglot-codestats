@@ -43,6 +43,28 @@ tasks {
             showStandardStreams = true
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
         }
+        // Print a summary of test results.
+        doLast {
+            // Define the test results directory and list XML result files
+            val testResultsDir = layout.buildDirectory.dir("test-results/test").get().asFile
+            val testResultsFiles = testResultsDir.listFiles {
+                file -> file.isFile && file.name.endsWith(".xml") } ?: emptyArray()
+            val totalTests = testResultsFiles.sumOf {
+                file -> file.readLines().count { it.contains("<testcase") } }
+            val failedTests = testResultsFiles.sumOf {
+                file -> file.readLines().count { it.contains("<failure") } }
+            val skippedTests = testResultsFiles.sumOf {
+                file -> file.readLines().count { it.contains("<skipped") } }
+            println("""
+                |
+                |Test Summary:
+                |===================================
+                |Total tests: $totalTests
+                |Failed tests: $failedTests
+                |Skipped tests: $skippedTests
+                |===================================
+                """.trimMargin())
+        }
     }
 
     jar {
@@ -58,8 +80,8 @@ tasks {
      * 2. Creates symbolic links for each JAR file, removing version numbers from the filenames.
      */
     val copyDependencies by registering(Copy::class) {
-        description = "Copies dependencies and creates symlinks without version numbers"
         group = "build"
+        description = "Copies dependencies and creates symlinks without version numbers"
 
         val prefixes = listOf(
             "kotlin-stdlib",
@@ -85,7 +107,7 @@ tasks {
 
 
     val compileAndRunCppTests by registering {
-        group = "build"
+        group = "verification"
         description = "Compile and run all C++ tests"
 
         doLast {
@@ -120,6 +142,7 @@ tasks {
                 println("Running test: $testName")
                 exec {
                     commandLine(outputFile.absolutePath)
+                    environment("GTEST_COLOR", "1")
                     standardOutput = System.out
                     errorOutput = System.err
                 }
@@ -155,6 +178,34 @@ tasks {
     }
 
 
+    val runPythonTests by registering(Exec::class) {
+        group = "verification"
+        description = "Run all pytest tests recursively in src-py-test"
+
+        val srcPyTestDir = file("src-py-test")
+        val srcPyDir = file("src-py")
+
+        environment("PYTHONPATH", srcPyDir.absolutePath)
+
+        commandLine(buildList {
+            add("pytest")
+            addAll(listOf("--color=yes", "-v"))
+            addAll(listOf("--maxfail=1", "--disable-warnings"))
+            add(srcPyTestDir.absolutePath)
+        })
+
+        dependsOn(copyDependencies)
+
+        doFirst {
+            println("Executing pytest in directory: ${srcPyTestDir.absolutePath}")
+            println("Command:\nPYTHONPATH=${srcPyDir.absolutePath} \\\n" +
+                    "${commandLine.joinToString(" ")}")
+        }
+
+        standardOutput = System.out
+        errorOutput = System.err
+    }
+
     val compilePython by registering(Exec::class) {
         group = "build"
         description = "Compile Python into bytecode"
@@ -171,6 +222,8 @@ tasks {
             addAll(listOf("-b", srcDir.absolutePath))
             addAll(listOf("-d", outputDir.absolutePath))
         })
+
+        dependsOn(runPythonTests)
 
         doFirst {
             println("Executing:\n${commandLine.joinToString(" ")}")

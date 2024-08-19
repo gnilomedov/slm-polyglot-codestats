@@ -24,4 +24,8 @@ fi
 gradle build
 read -p 'Press Enter to continue with codestats ...'
 
-python build-out/polyglot_py_bytecode/polyglot_codestats.pyc 'src-*' 'bin'
+python build-out/polyglot_py_bytecode/polyglot_codestats.pyc \
+  --llm_api_url=http://local+interactive \
+  --llm_api_key= \
+  -- \
+  'src-*' 'bin'
