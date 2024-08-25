@@ -1,6 +1,5 @@
 import ctypes
 from ctypes import cast, c_char, c_char_p, c_int, POINTER
-from dataclasses import dataclass
 import os
 import sys
 
@@ -75,18 +74,12 @@ class _CCharPGuard:
 
 
 def compose_code_improve_prompt(file_contents: list[tuple[str, str]]) -> str:
-    '''
-    Wrapper function for composeCodeImprovePrompt.
+    '''Wrapper function for composeCodeImprovePrompt.
 
-    Args:
-    paths (List[str]): List of file paths.
-    contents (List[str]): List of file contents corresponding to the paths.
-
-    Returns:
-    str: The composed prompt for code improvement.
-
-    Raises:
-    ValueError: If the lengths of paths and contents don't match.
+    :param file_contents: List of tuples where each tuple contains a file path (str)
+                          and its corresponding file content (str).
+    :return: The composed prompt for code improvement.
+    :raises ValueError: If the length of the file_contents list doesn't match.
     '''
     paths = (c_char_p * len(file_contents))(*[path.encode('utf-8') for path, _ in file_contents])
     contents = (c_char_p * len(file_contents))(*[content.encode('utf-8') for _, content in file_contents])
