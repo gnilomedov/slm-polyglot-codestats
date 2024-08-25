@@ -1,5 +1,4 @@
 import argparse
-import sys
 
 from polyglot_pipeline import LlmPolyglotPipeline
 

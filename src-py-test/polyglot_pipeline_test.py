@@ -11,15 +11,11 @@ from polyglot_pipeline import LlmPolyglotPipeline
 
 @pytest.fixture(autouse=True)
 def add_loguru_logger_to_caplog(caplog: pytest.LogCaptureFixture) -> Generator[None, None, None]:
-    '''
-    Redirect loguru logs to caplog for testing purposes.
+    '''Redirect loguru logs to caplog for testing purposes.
 
-    Args:
-        caplog: pytest's built-in fixture for capturing log messages.
-
-    Yields:
-        None: The fixture itself does not return any value, but allows the test to run
-        between setting up the logger and resetting it afterward.
+    :param caplog: pytest's built-in fixture for capturing log messages.
+    :yield: None. The fixture itself does not return any value, but allows the test to run
+            between setting up the logger and resetting it afterward.
     '''
     class PropagateHandler(logging.Handler):
         def emit(self, record: logging.LogRecord) -> None:
@@ -83,11 +79,9 @@ def mock_file_stats() -> list[dict[str, int | str]]:
 
 @pytest.fixture
 def pipeline(mock_args: Mock) -> LlmPolyglotPipeline:
-    '''
-    Create an instance of LlmPolyglotPipeline for testing.
+    '''Create an instance of LlmPolyglotPipeline for testing.
 
-    Returns:
-        LlmPolyglotPipeline: An instance of the pipeline for testing.
+    :param mock_args: Mock object with simulated command-line arguments.
     '''
     return LlmPolyglotPipeline(mock_args)
 
@@ -211,9 +205,10 @@ def test_execute_llm_query(mock_compose_prompt: Mock, mock_execute_query: Mock,
 @patch('polyglot_pipeline.LlmPolyglotPipeline.print_overall_stats')
 @patch('polyglot_pipeline.LlmPolyglotPipeline.print_detailed_stats')
 @patch('polyglot_pipeline.LlmPolyglotPipeline.execute_llm_query')
-def test_run(mock_execute_llm: Mock, mock_print_detailed: Mock, mock_print_overall: Mock,
-             mock_create_df: Mock, mock_analyze: Mock, mock_scan: Mock, mock_parse: Mock,
-             pipeline: LlmPolyglotPipeline) -> None:
+@patch('polyglot_pipeline.LlmPolyglotPipeline.train_demo_nano_llm')
+def test_run(train_demo_nano_llm: Mock, mock_execute_llm: Mock, mock_print_detailed: Mock,
+             mock_print_overall: Mock, mock_create_df: Mock, mock_analyze: Mock, mock_scan: Mock,
+             mock_parse: Mock, pipeline: LlmPolyglotPipeline) -> None:
     pipeline.run()
 
     mock_parse.assert_called_once()
@@ -223,3 +218,4 @@ def test_run(mock_execute_llm: Mock, mock_print_detailed: Mock, mock_print_overa
     mock_print_overall.assert_called_once()
     mock_print_detailed.assert_called_once()
     mock_execute_llm.assert_called_once()
+    train_demo_nano_llm.assert_called_once()

@@ -1,9 +1,24 @@
 # LLM Polyglot CodeStats
 
-LLM Polyglot CodeStats is a cross-language project that demonstrates interaction between
-Python, C++, and Kotlin to analyze code statistics across multiple source directories.
-Here, "Polyglot" highlights both the support for various programming languages and the integration
-with multiple Language Model APIs (LLMs).
+The **LLM Polyglot CodeStats** project demonstrates cross-language interaction and integration with
+multiple Language Model APIs (LLMs) to analyze code statistics across various source directories.
+It uses Python as the main driver, Kotlin for folder scanning, and C++ for file analysis,
+showcasing how different programming languages and APIs can collaborate to efficiently perform
+complex tasks.
+
+In addition to generating code statistics, the project also trains and fine-tunes code generation
+models:
+
+- **Pico Code Composer**: A basic LSTM model trained from scratch on the provided codebase,
+simulating the intelligence of a honeybee 💻🐝. This model serves as an introduction to training
+simple neural networks for code generation.
+
+- **Nano Code Composer**: A fine-tuned version of the pre-trained `microsoft/CodeGPT-small-py`
+model, designed to perform at the intellectual level of a rat 💻🐀. This demonstrates how existing
+models can be customized to handle specific tasks more effectively.
+
+These features make the project a comprehensive tool for understanding cross-language programming,
+LLM integration, and code generation using AI.
 
 ## Getting the Code
 
@@ -84,10 +99,3 @@ make clean
 ```bash
 ./bin/polyglot-codestats-e2e.sh
 ```
-
-## Project Purpose
-
-The purpose of this project is to demonstrate cross-programming language interaction and integration
-with multiple Language Model APIs by creating a code statistics tool. It uses Python as the main
-driver, Kotlin for folder scanning, and C++ for file analysis. The project showcases how different
-languages and APIs can work together to perform a complex task efficiently.
