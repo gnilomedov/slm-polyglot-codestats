@@ -1,7 +1,7 @@
 import pytest
 import textwrap
 
-from demo_nano_llm.simple_tokenizer import SimpleTokenizer
+from demo_nano_slm.simple_tokenizer import SimpleTokenizer
 
 
 @pytest.fixture

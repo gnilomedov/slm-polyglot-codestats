@@ -6,7 +6,7 @@ import sys
 from typing import Generator
 from unittest.mock import Mock, patch
 
-from polyglot_pipeline import LlmPolyglotPipeline
+from polyglot_pipeline import SlmPolyglotPipeline
 
 
 @pytest.fixture(autouse=True)
@@ -78,16 +78,16 @@ def mock_file_stats() -> list[dict[str, int | str]]:
 
 
 @pytest.fixture
-def pipeline(mock_args: Mock) -> LlmPolyglotPipeline:
-    '''Create an instance of LlmPolyglotPipeline for testing.
+def pipeline(mock_args: Mock) -> SlmPolyglotPipeline:
+    '''Create an instance of SlmPolyglotPipeline for testing.
 
     :param mock_args: Mock object with simulated command-line arguments.
     '''
-    return LlmPolyglotPipeline(mock_args)
+    return SlmPolyglotPipeline(mock_args)
 
 
 @patch('polyglot_pipeline.glob.glob')
-def test_parse_folder_masks(mock_glob: Mock, pipeline: LlmPolyglotPipeline,
+def test_parse_folder_masks(mock_glob: Mock, pipeline: SlmPolyglotPipeline,
                             caplog: pytest.LogCaptureFixture) -> None:
     mock_glob.side_effect = [['src-py'], ['src-cpp-1', 'src-cpp-2']]
 
@@ -104,7 +104,7 @@ def test_parse_folder_masks(mock_glob: Mock, pipeline: LlmPolyglotPipeline,
 
 
 @patch('polyglot_pipeline.scan_folders')
-def test_scan_folders(mock_scan_folders: Mock, pipeline: LlmPolyglotPipeline,
+def test_scan_folders(mock_scan_folders: Mock, pipeline: SlmPolyglotPipeline,
                       mock_file_contents: list[tuple[str, str]],
                       caplog: pytest.LogCaptureFixture) -> None:
     mock_scan_folders.return_value = mock_file_contents
@@ -119,7 +119,7 @@ def test_scan_folders(mock_scan_folders: Mock, pipeline: LlmPolyglotPipeline,
 
 
 @patch('polyglot_pipeline.analyze_files')
-def test_analyze_files(mock_analyze_files: Mock, pipeline: LlmPolyglotPipeline,
+def test_analyze_files(mock_analyze_files: Mock, pipeline: SlmPolyglotPipeline,
                        mock_file_stats: list[dict[str, int | str]],
                        caplog: pytest.LogCaptureFixture) -> None:
     mock_analyze_files.return_value = mock_file_stats
@@ -132,7 +132,7 @@ def test_analyze_files(mock_analyze_files: Mock, pipeline: LlmPolyglotPipeline,
     assert 'Analyze files in C++ ... Done. 2' in caplog.text
 
 
-def test_create_dataframe(pipeline: LlmPolyglotPipeline,
+def test_create_dataframe(pipeline: SlmPolyglotPipeline,
                           mock_file_stats: list[dict[str, int | str]]) -> None:
     pipeline.file_stats = mock_file_stats
     pipeline.create_dataframe()
@@ -143,7 +143,7 @@ def test_create_dataframe(pipeline: LlmPolyglotPipeline,
     assert pipeline.df['language'].tolist() == ['py', 'cpp']
 
 
-def test_print_overall_stats(pipeline: LlmPolyglotPipeline,
+def test_print_overall_stats(pipeline: SlmPolyglotPipeline,
                              mock_file_stats: list[dict[str, int | str]],
                              caplog: pytest.LogCaptureFixture) -> None:
     pipeline.file_stats = mock_file_stats
@@ -158,7 +158,7 @@ def test_print_overall_stats(pipeline: LlmPolyglotPipeline,
     assert 'total_classes' in caplog.text
 
 
-def test_print_detailed_stats(pipeline: LlmPolyglotPipeline,
+def test_print_detailed_stats(pipeline: SlmPolyglotPipeline,
                               mock_file_stats: list[dict[str, int | str]],
                               caplog: pytest.LogCaptureFixture) -> None:
     pipeline.file_stats = mock_file_stats
@@ -181,7 +181,7 @@ def test_print_detailed_stats(pipeline: LlmPolyglotPipeline,
 @patch('polyglot_pipeline.execute_llm_query')
 @patch('polyglot_pipeline.compose_code_improve_prompt')
 def test_execute_llm_query(mock_compose_prompt: Mock, mock_execute_query: Mock,
-                           pipeline: LlmPolyglotPipeline, mock_file_contents: list[tuple[str, str]],
+                           pipeline: SlmPolyglotPipeline, mock_file_contents: list[tuple[str, str]],
                            caplog: pytest.LogCaptureFixture) -> None:
     pipeline.file_contents = mock_file_contents
     mock_compose_prompt.return_value = 'test prompt'
@@ -198,17 +198,17 @@ def test_execute_llm_query(mock_compose_prompt: Mock, mock_execute_query: Mock,
     assert 'LLM response' in caplog.text
 
 
-@patch('polyglot_pipeline.LlmPolyglotPipeline.parse_folder_masks')
-@patch('polyglot_pipeline.LlmPolyglotPipeline.scan_folders')
-@patch('polyglot_pipeline.LlmPolyglotPipeline.analyze_files')
-@patch('polyglot_pipeline.LlmPolyglotPipeline.create_dataframe')
-@patch('polyglot_pipeline.LlmPolyglotPipeline.print_overall_stats')
-@patch('polyglot_pipeline.LlmPolyglotPipeline.print_detailed_stats')
-@patch('polyglot_pipeline.LlmPolyglotPipeline.execute_llm_query')
-@patch('polyglot_pipeline.LlmPolyglotPipeline.train_demo_nano_llm')
-def test_run(train_demo_nano_llm: Mock, mock_execute_llm: Mock, mock_print_detailed: Mock,
+@patch('polyglot_pipeline.SlmPolyglotPipeline.parse_folder_masks')
+@patch('polyglot_pipeline.SlmPolyglotPipeline.scan_folders')
+@patch('polyglot_pipeline.SlmPolyglotPipeline.analyze_files')
+@patch('polyglot_pipeline.SlmPolyglotPipeline.create_dataframe')
+@patch('polyglot_pipeline.SlmPolyglotPipeline.print_overall_stats')
+@patch('polyglot_pipeline.SlmPolyglotPipeline.print_detailed_stats')
+@patch('polyglot_pipeline.SlmPolyglotPipeline.execute_llm_query')
+@patch('polyglot_pipeline.SlmPolyglotPipeline.train_demo_nano_slm')
+def test_run(train_demo_nano_slm: Mock, mock_execute_llm: Mock, mock_print_detailed: Mock,
              mock_print_overall: Mock, mock_create_df: Mock, mock_analyze: Mock, mock_scan: Mock,
-             mock_parse: Mock, pipeline: LlmPolyglotPipeline) -> None:
+             mock_parse: Mock, pipeline: SlmPolyglotPipeline) -> None:
     pipeline.run()
 
     mock_parse.assert_called_once()
@@ -218,4 +218,4 @@ def test_run(train_demo_nano_llm: Mock, mock_execute_llm: Mock, mock_print_detai
     mock_print_overall.assert_called_once()
     mock_print_detailed.assert_called_once()
     mock_execute_llm.assert_called_once()
-    train_demo_nano_llm.assert_called_once()
+    train_demo_nano_slm.assert_called_once()

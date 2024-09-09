@@ -1,6 +1,6 @@
 import argparse
 
-from polyglot_pipeline import LlmPolyglotPipeline
+from polyglot_pipeline import SlmPolyglotPipeline
 
 
 def get_args() -> argparse.Namespace:
@@ -17,7 +17,7 @@ def get_args() -> argparse.Namespace:
 
 def main() -> None:
     args = get_args()
-    pipeline = LlmPolyglotPipeline(args)
+    pipeline = SlmPolyglotPipeline(args)
     pipeline.run()
 
 
