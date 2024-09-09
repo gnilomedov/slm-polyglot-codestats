@@ -2,7 +2,7 @@ import pytest
 
 import torch
 
-from demo_nano_llm.multi_file_content_code_dataset import MultiFileContentCodeDataset
+from demo_nano_slm.multi_file_content_code_dataset import MultiFileContentCodeDataset
 
 
 # Constants for test file contents

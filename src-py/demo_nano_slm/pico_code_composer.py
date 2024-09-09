@@ -8,10 +8,10 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 
-from demo_nano_llm.language_sequence_code_composer import LanguageSequenceCondeComposer
-from demo_nano_llm.multi_file_content_code_dataset import MultiFileContentCodeDataset
-from demo_nano_llm.simple_tokenizer import SimpleTokenizer
-from demo_nano_llm.utils import model_summary, train_model
+from demo_nano_slm.language_sequence_code_composer import LanguageSequenceCondeComposer
+from demo_nano_slm.multi_file_content_code_dataset import MultiFileContentCodeDataset
+from demo_nano_slm.simple_tokenizer import SimpleTokenizer
+from demo_nano_slm.utils import model_summary, train_model
 
 
 class PicoCondeComposer(LanguageSequenceCondeComposer):

@@ -1,6 +1,6 @@
-# LLM Polyglot CodeStats
+# SLM Polyglot CodeStats
 
-The **LLM Polyglot CodeStats** project demonstrates cross-language interaction and integration with
+The **SLM Polyglot CodeStats** project demonstrates cross-language interaction and integration with
 multiple Language Model APIs (LLMs) to analyze code statistics across various source directories.
 It uses Python as the main driver, Kotlin for folder scanning, and C++ for file analysis,
 showcasing how different programming languages and APIs can collaborate to efficiently perform
@@ -18,14 +18,14 @@ model, designed to perform at the intellectual level of a rat 💻🐀. This dem
 models can be customized to handle specific tasks more effectively.
 
 These features make the project a comprehensive tool for understanding cross-language programming,
-LLM integration, and code generation using AI.
+SLM integration, and code generation using AI.
 
 ## Getting the Code
 
 0. Clone the repository:
 ```bash
-git clone https://github.com/gnilomedov/llm-polyglot-codestats.git
-cd llm-polyglot-codestats
+git clone https://github.com/gnilomedov/slm-polyglot-codestats
+cd slm-polyglot-codestats
 ```
 
 ## Setting Up Dependencies

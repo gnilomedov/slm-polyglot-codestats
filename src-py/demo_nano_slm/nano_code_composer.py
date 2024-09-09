@@ -7,9 +7,9 @@ from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
-from demo_nano_llm.language_sequence_code_composer import LanguageSequenceCondeComposer
-from demo_nano_llm.multi_file_content_code_dataset import MultiFileContentCodeDataset
-from demo_nano_llm.utils import model_summary, train_model
+from demo_nano_slm.language_sequence_code_composer import LanguageSequenceCondeComposer
+from demo_nano_slm.multi_file_content_code_dataset import MultiFileContentCodeDataset
+from demo_nano_slm.utils import model_summary, train_model
 
 
 class NanoCondeComposer(LanguageSequenceCondeComposer):
@@ -25,10 +25,10 @@ class NanoCondeComposer(LanguageSequenceCondeComposer):
         disclaimer = textwrap.dedent('''\
             Disclaimer: This model's code output is like what you'd get if a rat\033[90m
                           \033[93m   __\033[90m
-                 (\__/)   \033[93m  /  \\\033[90m
+                 (\\__/)   \033[93m  /  \\\033[90m
                  (o.o)    \033[93m /o . \\\033[90m
                   " "     \033[93m/  o O \\\033[90m
-            \____(")(")   \033[93m\_._O_./\033[35m
+            \\____(")(")   \033[93m\\_._O_./\033[35m
             could learn programming overnight—basic and not sophisticated.
             Animals typically don't write code; most of their brain power is devoted to
             controlling movements, recognizing food, processing smells, and other vital needs.''')

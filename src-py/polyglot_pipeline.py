@@ -5,14 +5,14 @@ import pandas as pd
 from tabulate import tabulate
 import textwrap
 
-from demo_nano_llm.nano_code_composer import NanoCondeComposer
-from demo_nano_llm.pico_code_composer import PicoCondeComposer
+from demo_nano_slm.nano_code_composer import NanoCondeComposer
+from demo_nano_slm.pico_code_composer import PicoCondeComposer
 from interop.analysis_extern_c_h import PyFileStats
 from interop.cpp import analyze_files, compose_code_improve_prompt
 from interop.kotlin import execute_llm_query, scan_folders
 
 
-class LlmPolyglotPipeline:
+class SlmPolyglotPipeline:
     '''Scans and analyzes code files in multiple languages, generating improvements using an LLM.'''
 
     def __init__(self, args: argparse.Namespace):
@@ -99,7 +99,7 @@ class LlmPolyglotPipeline:
             compose_code_improve_prompt(self.file_contents))
         logger.info(f'LLM Response:\n\n=== === ===\n{self.llm_response}\n=== === ===\n\n')
 
-    def train_demo_nano_llm(self):
+    def train_demo_nano_slm(self):
         '''Train demo LLMs using the file contents.'''
         for composer in [
                     NanoCondeComposer(),
@@ -173,4 +173,4 @@ class LlmPolyglotPipeline:
         self.print_overall_stats()
         self.print_detailed_stats()
         self.execute_llm_query()
-        self.train_demo_nano_llm()
+        self.train_demo_nano_slm()

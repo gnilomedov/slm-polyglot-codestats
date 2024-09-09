@@ -188,7 +188,7 @@ tasks {
         environment("PYTHONPATH", srcPyDir.absolutePath)
 
         commandLine(buildList {
-            add("pytest")
+            add(findExecutable("pytest"))
             addAll(listOf("--color=yes", "-v"))
             addAll(listOf("--maxfail=1", "--disable-warnings"))
             add(srcPyTestDir.absolutePath)
@@ -286,4 +286,13 @@ fun createSymlinksWithoutVersions() {
             Files.createSymbolicLink(symlink.toPath(), file.toPath())
         }
     }
+}
+
+/** Finds the full path of the specified executable by using the 'which' command. */
+fun findExecutable(name: String): String {
+    return ProcessBuilder("which", name)
+        .start()
+        .inputStream
+        .bufferedReader()
+        .use { it.readText().trim() }
 }
