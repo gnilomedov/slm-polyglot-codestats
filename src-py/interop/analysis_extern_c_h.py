@@ -7,9 +7,8 @@ from interop.cpp_utils import decode_pointer_c_char_str
 # This module should be kept in sync with src-cpp/analysis_extern_c.h
 
 class FileStats(Structure):
-    '''
-    C-compatible structure for file statistics.
-    
+    '''C-compatible structure for file statistics.
+
     This class corresponds to the C struct defined in analysis_extern_c.h.
     '''
     _fields_ = [
@@ -27,9 +26,8 @@ class FileStats(Structure):
 
 @dataclass
 class PyFileStats:
-    '''
-    Python dataclass for file statistics.
-    
+    '''Python dataclass for file statistics.
+
     This class provides a more Pythonic interface to the file statistics data.
     '''
     path: str

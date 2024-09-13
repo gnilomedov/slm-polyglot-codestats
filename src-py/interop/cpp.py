@@ -35,10 +35,9 @@ class _AnalyseFilesGuard:
 
 
 def analyze_files(file_contents: list[tuple[str, str]]) -> list[PyFileStats]:
-    '''
-    Analyze file contents using a C library function.
+    '''Analyze file contents using a C library function.
 
-    :file_contents: List of tuples containing file path and content.
+    :param file_contents: List of tuples containing file path and content.
     :return: List of PyFileStats objects containing analysis results.
     '''
     paths = (c_char_p * len(file_contents))(*[path.encode('utf-8') for path, _ in file_contents])

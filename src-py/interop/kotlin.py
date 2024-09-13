@@ -22,10 +22,9 @@ def execute_llm_query(api_url: str, api_key: str, prompt_txt: str) -> list[tuple
 
 
 def scan_folders(folders: list[str]) -> list[tuple[str, str]]:
-    '''
-    Scan the given folders for files with specific extensions using Java code via JPype.
+    '''Scan the given folders for files with specific extensions using Java code via JPype.
 
-    :folders: List of folder paths to scan.
+    :param folders: List of folder paths to scan.
     :return: List of tuples containing file paths and their contents.
     '''
 
@@ -37,10 +36,9 @@ def scan_folders(folders: list[str]) -> list[tuple[str, str]]:
 
 
 def _list_py2java(pylist: list[str]) -> 'jpype.java.util.ArrayList':
-    '''
-    Convert a Python list to a Java ArrayList.
+    '''Convert a Python list to a Java ArrayList.
 
-    :py_list: Python list to convert.
+    :param pylist: Python list to convert.
     :return: Converted Java ArrayList.
     '''
     java_list = jpype.java.util.ArrayList()
