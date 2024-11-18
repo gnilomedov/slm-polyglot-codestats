@@ -22,7 +22,7 @@ SLM integration, and code generation using AI.
 
 ## Getting the Code
 
-0. Clone the repository:
+### 0. Clone the repository:
 ```bash
 git clone https://github.com/gnilomedov/slm-polyglot-codestats
 cd slm-polyglot-codestats
