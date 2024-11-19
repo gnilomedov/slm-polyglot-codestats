@@ -85,7 +85,7 @@ make
 
 ### 6. **Run**:
 ```bash
-python build-out/pycache/polyglot_codestats.pyc 'src-*' 'bin'
+python build-out/polyglot_py_bytecode/polyglot_codestats.pyc 'src-*' 'bin'
 ```
 
 Replace `'src-*'` with your preferred source directory.
